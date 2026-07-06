@@ -37,6 +37,14 @@ export default buildConfig({
     meta: {
       titleSuffix: '— One World × CIC',
     },
+    components: {
+      beforeDashboard: ['/components/admin/RecentLeads'],
+    },
+    // Custom admin component paths (e.g. '/components/admin/…') resolve relative
+    // to src/, not the project root.
+    importMap: {
+      baseDir: dirname,
+    },
   },
   // Bilingual content: Georgian default, English alternate (PRD R1.x).
   localization: {

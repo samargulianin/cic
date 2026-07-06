@@ -53,7 +53,7 @@ export async function Hero(props: HeroProps) {
             </p>
           ) : null}
           <div className="mt-1 flex flex-wrap items-center gap-3">
-            <ButtonLink href="#enquire">{props.ctaLabel || t('enquire')}</ButtonLink>
+            <ButtonLink href="#enquire" source="hero-cta">{props.ctaLabel || t('enquire')}</ButtonLink>
             <ButtonLink href="#how-it-works" variant="light">
               {t('learnMore')}
             </ButtonLink>

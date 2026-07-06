@@ -25,7 +25,7 @@ export async function CTABanner(props: CTABannerProps) {
             <p className="mx-auto mt-4 max-w-xl text-white/85">{props.subheading}</p>
           ) : null}
           <div className="mt-8 flex justify-center">
-            <ButtonLink href="#enquire" variant="light">
+            <ButtonLink href="#enquire" variant="light" source="cta-banner">
               {props.ctaLabel || t('enquire')}
             </ButtonLink>
           </div>

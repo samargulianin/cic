@@ -30,7 +30,7 @@ Admin login after seed: `admin@oneworld.ge` / `changeme123`.
 
 ## Architecture
 
-Single Next.js 16 (App Router) app with **Payload CMS 3 embedded** — one codebase, one deploy. React 19, Tailwind v4, SQLite locally (`@payloadcms/db-sqlite`; swap to Postgres for production).
+Single Next.js 16 (App Router) app with **Payload CMS 3 embedded** — one codebase, one deploy. React 19, Tailwind v4, **Postgres (Neon)** via `@payloadcms/db-postgres` (`DATABASE_URI`) in both dev and production. (An earlier SQLite setup — `oneworld.db`/`@payloadcms/db-sqlite` — has been retired; `.env.bak.sqlite` remains as a reference.)
 
 **Two root layouts via route groups** (there is no shared `app/layout.tsx`):
 - `src/app/(frontend)/[locale]/` — the public localized site.

@@ -21,7 +21,15 @@ export async function seed() {
   if (existing.totalDocs === 0) {
     await payload.create({
       collection: 'users',
-      data: { email: 'admin@oneworld.ge', password: 'changeme123', name: 'One World Admin' },
+      data: { email: 'admin@oneworld.ge', password: 'changeme123', name: 'One World Admin', role: 'admin' },
+    })
+  } else if (!existing.docs[0]?.role) {
+    // Backfill: a user created before the `role` field existed has no role and
+    // would otherwise lose admin powers. Promote the first account to admin.
+    await payload.update({
+      collection: 'users',
+      id: existing.docs[0].id,
+      data: { role: 'admin' },
     })
   }
 

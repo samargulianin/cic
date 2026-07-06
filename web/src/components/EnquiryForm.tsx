@@ -1,8 +1,9 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { submitEnquiry, type EnquiryState } from '@/actions/enquiry'
+import { STUDY_LEVELS } from '@/lib/studyLevels'
 
 const initial: EnquiryState = { status: 'idle' }
 
@@ -16,6 +17,19 @@ export function EnquiryForm({
   const t = useTranslations('enquiry')
   const [state, action, isPending] = useActionState(submitEnquiry, initial)
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+
+  // Capture which CTA opened the form: any link to #enquire can carry a
+  // `data-enquiry-source` attribute; the last one clicked wins.
+  const [source, setSource] = useState('homepage')
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as HTMLElement)?.closest?.('a[href*="#enquire"]') as HTMLElement | null
+      const src = link?.dataset?.enquirySource
+      if (src) setSource(src)
+    }
+    document.addEventListener('click', onClick, true)
+    return () => document.removeEventListener('click', onClick, true)
+  }, [])
 
   if (state.status === 'success') {
     return (
@@ -36,7 +50,7 @@ export function EnquiryForm({
   return (
     <form action={action} className="flex flex-col gap-4" noValidate>
       <input type="hidden" name="locale" value={locale} />
-      <input type="hidden" name="source" value="homepage" />
+      <input type="hidden" name="source" value={source} />
       {/* Honeypot — hidden from users, catches bots. */}
       <input
         type="text"
@@ -67,6 +81,17 @@ export function EnquiryForm({
             {fields.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.title}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className={labelCls}>{t('studyLevel')}</span>
+          <select name="studyLevel" className={inputCls} defaultValue="">
+            <option value="">{t('studyLevelPlaceholder')}</option>
+            {STUDY_LEVELS.map((l) => (
+              <option key={l.value} value={l.value}>
+                {l.label}
               </option>
             ))}
           </select>

@@ -41,10 +41,12 @@ type ButtonProps = {
   children: React.ReactNode
   variant?: 'primary' | 'ghost' | 'light'
   className?: string
+  /** Tags an #enquire CTA so the form records which button opened it. */
+  source?: string
 }
 
 // Link styled as a button. Cambridge-red primary, navy/outline alternatives.
-export function ButtonLink({ href, children, variant = 'primary', className }: ButtonProps) {
+export function ButtonLink({ href, children, variant = 'primary', className, source }: ButtonProps) {
   const styles = {
     primary: 'bg-red-cta text-white shadow-sm hover:brightness-110',
     ghost: 'border border-navy-800/25 bg-white/0 text-ink hover:border-red-500 hover:text-red-600',
@@ -53,6 +55,7 @@ export function ButtonLink({ href, children, variant = 'primary', className }: B
   return (
     <a
       href={href}
+      data-enquiry-source={source}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500',
         styles,

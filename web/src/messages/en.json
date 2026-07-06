@@ -13,6 +13,8 @@
     "phone": "Phone",
     "field": "Field of interest",
     "fieldPlaceholder": "Select a field (optional)",
+    "studyLevel": "Study level",
+    "studyLevelPlaceholder": "Select a level (optional)",
     "preferredContact": "Preferred contact method",
     "whatsapp": "WhatsApp",
     "phoneCall": "Phone",

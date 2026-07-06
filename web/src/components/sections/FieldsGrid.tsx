@@ -49,6 +49,7 @@ export async function FieldsGrid(props: FieldsGridProps) {
               )}
               <a
                 href={`#enquire`}
+                data-enquiry-source={field.slug ? `field:${field.slug}` : 'fields-grid'}
                 className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:gap-2.5"
               >
                 {t('explore')} <span aria-hidden>↗</span>

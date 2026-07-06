@@ -1,13 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { STUDY_LEVELS } from '../lib/studyLevels'
 
 // The 19 professional fields — the primary organising structure (PRD R2.1).
 // Skeleton here; full field/programme browse + filter is a later phase.
-export const STUDY_LEVELS = [
-  { label: 'Diploma (Level 4)', value: 'level-4' },
-  { label: 'Higher Diploma (Level 5)', value: 'level-5' },
-  { label: 'Graduate (Level 6)', value: 'level-6' },
-  { label: 'Postgraduate (Level 7)', value: 'level-7' },
-] as const
+export { STUDY_LEVELS }
 
 export const Fields: CollectionConfig = {
   slug: 'fields',

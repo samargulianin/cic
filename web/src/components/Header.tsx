@@ -14,15 +14,21 @@ export async function Header({ locale }: { locale: Locale }) {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur">
       <Container className="flex h-18 items-center justify-between gap-4 py-2">
-        <Link href="/" className="flex items-center" aria-label="Cambridge International College — One World">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Cambridge International College — One World">
           <Image
-            src="/logo-mark.png"
+            src="/crest.png"
             alt="Cambridge International College"
-            width={657}
-            height={209}
+            width={200}
+            height={190}
             priority
             className="h-11 w-auto sm:h-12"
           />
+          <span className="hidden flex-col leading-tight sm:flex">
+            <span className="text-base font-bold tracking-tight text-navy-900">Cambridge</span>
+            <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">
+              International College
+            </span>
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 rounded-full bg-navy-900/[0.04] p-1 text-sm font-medium text-navy-900/70 lg:flex">
@@ -39,7 +45,7 @@ export async function Header({ locale }: { locale: Locale }) {
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <ButtonLink href="#enquire" className="hidden sm:inline-flex">
+          <ButtonLink href="#enquire" className="hidden sm:inline-flex" source="header-cta">
             {header?.ctaLabel || t('enquire')}
           </ButtonLink>
         </div>

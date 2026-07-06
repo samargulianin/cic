@@ -47,6 +47,7 @@ export async function submitEnquiry(
   const email = (formData.get('email') as string)?.trim()
   const phone = (formData.get('phone') as string)?.trim()
   const fieldOfInterest = (formData.get('fieldOfInterest') as string)?.trim()
+  const studyLevel = (formData.get('studyLevel') as string)?.trim()
   const preferredContact = (formData.get('preferredContact') as string) || 'whatsapp'
   const message = (formData.get('message') as string)?.trim()
   const consent = formData.get('consent') === 'on'
@@ -61,6 +62,46 @@ export async function submitEnquiry(
 
   try {
     const payload = await getPayloadClient()
+
+    // Conservative de-dup: collapse an accidental re-submit (same email within
+    // 10 minutes) into a note on the existing lead rather than a duplicate row.
+    // A genuine later follow-up falls outside the window → new (notified) lead.
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    const existing = await payload.find({
+      collection: 'enquiries',
+      overrideAccess: true,
+      limit: 1,
+      sort: '-createdAt',
+      where: {
+        and: [
+          { email: { equals: email } },
+          { createdAt: { greater_than: tenMinutesAgo } },
+        ],
+      },
+    })
+
+    if (existing.docs.length > 0) {
+      const lead = existing.docs[0]
+      const priorNotes = Array.isArray(lead.notes) ? lead.notes : []
+      await payload.update({
+        collection: 'enquiries',
+        id: lead.id,
+        overrideAccess: true,
+        data: {
+          notes: [
+            ...priorNotes,
+            {
+              note: `Repeat enquiry via "${source}"${
+                message ? `:\n${message}` : ''
+              }`,
+              at: new Date().toISOString(),
+            },
+          ],
+        },
+      })
+      return { status: 'success' }
+    }
+
     await payload.create({
       collection: 'enquiries',
       overrideAccess: true, // server-trusted; public create is disabled on the collection
@@ -73,6 +114,7 @@ export async function submitEnquiry(
         consent,
         source,
         locale,
+        ...(studyLevel ? { studyLevel: studyLevel as 'level-4' | 'level-5' | 'level-6' | 'level-7' } : {}),
         ...(fieldOfInterest && !Number.isNaN(Number(fieldOfInterest))
           ? { fieldOfInterest: Number(fieldOfInterest) }
           : {}),

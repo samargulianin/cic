@@ -360,6 +360,10 @@ export interface Enquiry {
   email: string;
   phone?: string | null;
   fieldOfInterest?: (number | null) | Field;
+  /**
+   * Study level the enquirer is interested in (if given).
+   */
+  studyLevel?: ('level-4' | 'level-5' | 'level-6' | 'level-7') | null;
   preferredContact?: ('whatsapp' | 'phone' | 'email') | null;
   message?: string | null;
   /**
@@ -367,14 +371,37 @@ export interface Enquiry {
    */
   consent: boolean;
   /**
-   * Where the enquiry came from (page/field context for pre-fill).
+   * Which page/CTA the enquiry came from.
    */
   source?: string | null;
   /**
    * UI language at submission.
    */
   locale?: string | null;
+  /**
+   * Internal notes — calls, follow-ups, outcomes. Not shown to the enquirer.
+   */
+  notes?:
+    | {
+        note: string;
+        author?: (number | null) | User;
+        at?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('new' | 'contacted' | 'enrolled' | 'closed') | null;
+  /**
+   * Staff member handling this lead.
+   */
+  assignedTo?: (number | null) | User;
+  /**
+   * When to next contact this lead.
+   */
+  followUpDate?: string | null;
+  /**
+   * Auto-set when the lead first moves off "New".
+   */
+  contactedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -385,6 +412,10 @@ export interface Enquiry {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Admins can delete leads and manage users. Staff can read and work leads.
+   */
+  role: 'admin' | 'staff';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -689,12 +720,24 @@ export interface EnquiriesSelect<T extends boolean = true> {
   email?: T;
   phone?: T;
   fieldOfInterest?: T;
+  studyLevel?: T;
   preferredContact?: T;
   message?: T;
   consent?: T;
   source?: T;
   locale?: T;
+  notes?:
+    | T
+    | {
+        note?: T;
+        author?: T;
+        at?: T;
+        id?: T;
+      };
   status?: T;
+  assignedTo?: T;
+  followUpDate?: T;
+  contactedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -704,6 +747,7 @@ export interface EnquiriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
