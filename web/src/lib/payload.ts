@@ -30,6 +30,18 @@ export async function getFields(locale: Locale) {
   return res.docs
 }
 
+export async function getPrograms() {
+  const payload = await getPayloadClient()
+  const res = await payload.find({ collection: 'programs', sort: 'order', limit: 300, depth: 0 })
+  return res.docs
+}
+
+export async function getProgram(slug: string) {
+  const payload = await getPayloadClient()
+  const res = await payload.find({ collection: 'programs', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+  return res.docs[0] ?? null
+}
+
 export async function getHeader(locale: Locale) {
   const payload = await getPayloadClient()
   return payload.findGlobal({ slug: 'header', locale, depth: 1 })

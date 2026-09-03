@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { submitEnquiry, type EnquiryState } from '@/actions/enquiry'
-import { STUDY_LEVELS } from '@/lib/studyLevels'
 
 const initial: EnquiryState = { status: 'idle' }
 
@@ -81,17 +80,6 @@ export function EnquiryForm({
             {fields.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1.5">
-          <span className={labelCls}>{t('studyLevel')}</span>
-          <select name="studyLevel" className={inputCls} defaultValue="">
-            <option value="">{t('studyLevelPlaceholder')}</option>
-            {STUDY_LEVELS.map((l) => (
-              <option key={l.value} value={l.value}>
-                {l.label}
               </option>
             ))}
           </select>

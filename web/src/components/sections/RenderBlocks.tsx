@@ -2,7 +2,10 @@ import { Hero } from './Hero'
 import { TrustStrip } from './TrustStrip'
 import { StatsCallout } from './StatsCallout'
 import { FieldsGrid } from './FieldsGrid'
+import { Programs } from './Programs'
 import { Narrative } from './Narrative'
+import { HowItWorks } from './HowItWorks'
+import { About } from './About'
 import { CTABanner } from './CTABanner'
 
 // Maps Payload `layout` blocks to their React sections. Order is author-controlled
@@ -22,8 +25,14 @@ export async function RenderBlocks({ blocks }: { blocks?: any[] | null }) {
             return <StatsCallout key={key} {...block} />
           case 'fieldsGrid':
             return <FieldsGrid key={key} {...block} />
+          case 'programs':
+            return <Programs key={key} {...block} />
           case 'narrative':
             return <Narrative key={key} {...block} />
+          case 'howItWorks':
+            return <HowItWorks key={key} {...block} />
+          case 'about':
+            return <About key={key} {...block} />
           case 'ctaBanner':
             return <CTABanner key={key} {...block} />
           default:

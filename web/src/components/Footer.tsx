@@ -20,23 +20,13 @@ export async function Footer({ locale }: { locale: Locale }) {
     <footer className="border-t border-border bg-subtle">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-4 lg:col-span-1">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/crest.png"
-              alt="Cambridge International College"
-              width={200}
-              height={190}
-              className="h-14 w-auto"
-            />
-            <div className="flex flex-col leading-tight">
-              <span className="text-base font-bold tracking-tight text-navy-900">
-                Cambridge
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-                International College
-              </span>
-            </div>
-          </div>
+          <Image
+            src="/brand/cic-affiliate.png"
+            alt="Official 2026 Affiliate of Cambridge International College"
+            width={2786}
+            height={844}
+            className="h-14 w-auto self-start"
+          />
           {footer?.tagline ? <p className="max-w-xs text-sm text-muted">{footer.tagline}</p> : null}
           {social.length ? (
             <ul className="flex flex-wrap gap-3 text-sm font-medium text-muted">
@@ -70,7 +60,7 @@ export async function Footer({ locale }: { locale: Locale }) {
       <div className="border-t border-border">
         <Container className="flex flex-col gap-2 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           {footer?.accreditationNote ? <p className="max-w-2xl">{footer.accreditationNote}</p> : <span />}
-          <p>© {year} One World. Cambridge International College.</p>
+          <p>© {year} CIC Georgia </p>
         </Container>
       </div>
     </footer>

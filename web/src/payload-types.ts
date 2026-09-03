@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     pages: Page;
     fields: Field;
+    programs: Program;
     media: Media;
     enquiries: Enquiry;
     users: User;
@@ -81,6 +82,7 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     fields: FieldsSelect<false> | FieldsSelect<true>;
+    programs: ProgramsSelect<false> | ProgramsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -141,7 +143,17 @@ export interface Page {
    */
   slug: string;
   layout?:
-    | (HeroBlock | TrustStripBlock | StatsCalloutBlock | FieldsGridBlock | NarrativeBlock | CTABannerBlock)[]
+    | (
+        | HeroBlock
+        | TrustStripBlock
+        | StatsCalloutBlock
+        | FieldsGridBlock
+        | ProgramsBlock
+        | NarrativeBlock
+        | HowItWorksBlock
+        | AboutBlock
+        | CTABannerBlock
+      )[]
     | null;
   meta?: {
     title?: string | null;
@@ -318,6 +330,18 @@ export interface Field {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProgramsBlock".
+ */
+export interface ProgramsBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  intro?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'programs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "NarrativeBlock".
  */
 export interface NarrativeBlock {
@@ -339,6 +363,91 @@ export interface NarrativeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock".
+ */
+export interface HowItWorksBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  intro?: string | null;
+  formats?:
+    | {
+        name: string;
+        /**
+         * Optional badge, e.g. "New".
+         */
+        tag?: string | null;
+        description?: string | null;
+        /**
+         * Optional highlighted note, e.g. which fields the format covers.
+         */
+        programs?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  examNote?: {
+    heading?: string | null;
+    body?: string | null;
+  };
+  facts?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  process?:
+    | {
+        title: string;
+        /**
+         * Shown as a badge, e.g. "3 weeks".
+         */
+        duration?: string | null;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  included?: {
+    heading?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  footnote?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'howItWorks';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock".
+ */
+export interface AboutBlock {
+  eyebrow?: string | null;
+  heading?: string | null;
+  lead?: string | null;
+  offerings?: {
+    heading?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  paragraphs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'about';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CTABannerBlock".
  */
 export interface CTABannerBlock {
@@ -349,6 +458,47 @@ export interface CTABannerBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'ctaBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programs".
+ */
+export interface Program {
+  id: number;
+  title: string;
+  /**
+   * URL segment: /programs/<slug>
+   */
+  slug: string;
+  level: 'diploma' | 'mastery' | 'minimba' | 'emba';
+  fieldEn?: string | null;
+  fieldKa?: string | null;
+  order?: number | null;
+  /**
+   * Optional one-line overview.
+   */
+  summary?: string | null;
+  description?: string | null;
+  modules?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Pulled verbatim from the Cambridge course page.
+   */
+  topics?: string | null;
+  /**
+   * Pulled verbatim from the Cambridge course page.
+   */
+  career?: string | null;
+  /**
+   * Cambridge course page (full syllabus).
+   */
+  sourceUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -468,6 +618,10 @@ export interface PayloadLockedDocument {
         value: number | Field;
       } | null)
     | ({
+        relationTo: 'programs';
+        value: number | Program;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -535,7 +689,10 @@ export interface PagesSelect<T extends boolean = true> {
         trustStrip?: T | TrustStripBlockSelect<T>;
         statsCallout?: T | StatsCalloutBlockSelect<T>;
         fieldsGrid?: T | FieldsGridBlockSelect<T>;
+        programs?: T | ProgramsBlockSelect<T>;
         narrative?: T | NarrativeBlockSelect<T>;
+        howItWorks?: T | HowItWorksBlockSelect<T>;
+        about?: T | AboutBlockSelect<T>;
         ctaBanner?: T | CTABannerBlockSelect<T>;
       };
   meta?:
@@ -615,6 +772,17 @@ export interface FieldsGridBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProgramsBlock_select".
+ */
+export interface ProgramsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "NarrativeBlock_select".
  */
 export interface NarrativeBlockSelect<T extends boolean = true> {
@@ -627,6 +795,86 @@ export interface NarrativeBlockSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock_select".
+ */
+export interface HowItWorksBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  formats?:
+    | T
+    | {
+        name?: T;
+        tag?: T;
+        description?: T;
+        programs?: T;
+        id?: T;
+      };
+  examNote?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+      };
+  facts?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        duration?: T;
+        text?: T;
+        id?: T;
+      };
+  included?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  footnote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutBlock_select".
+ */
+export interface AboutBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  lead?: T;
+  offerings?:
+    | T
+    | {
+        heading?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  paragraphs?:
+    | T
+    | {
         text?: T;
         id?: T;
       };
@@ -656,6 +904,31 @@ export interface FieldsSelect<T extends boolean = true> {
   levels?: T;
   order?: T;
   icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programs_select".
+ */
+export interface ProgramsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  level?: T;
+  fieldEn?: T;
+  fieldKa?: T;
+  order?: T;
+  summary?: T;
+  description?: T;
+  modules?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  topics?: T;
+  career?: T;
+  sourceUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

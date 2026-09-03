@@ -1,0 +1,199 @@
+{
+  "id": "cicEnquiryWaSheets",
+  "name": "CIC Enquiry — WhatsApp + Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cic-enquiry",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b1a1e001-0000-4000-8000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-40, 300],
+      "webhookId": "cic-enquiry"
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// Normalize the enquiry payload coming from the CIC website afterChange hook.\n// The webhook delivers the JSON body under $json.body (fallback: $json).\nconst input = $input.first().json;\nconst b = input.body || input;\n\n// --- Shared-secret gate: must equal the site's N8N_WEBHOOK_SECRET ---\n// Edit EXPECTED_SECRET to enforce; leave the placeholder to skip (dev/test).\nconst EXPECTED_SECRET = 'REPLACE_WITH_WEBHOOK_SECRET';\nconst headers = input.headers || {};\nconst provided = headers['x-n8n-secret'] || headers['X-N8N-Secret'] || '';\nif (EXPECTED_SECRET !== 'REPLACE_WITH_WEBHOOK_SECRET' && provided !== EXPECTED_SECRET) {\n  throw new Error('Unauthorized: bad or missing x-n8n-secret header');\n}\n\n// --- Phone -> E.164 digits for WhatsApp Cloud API (no leading '+') ---\nconst raw = String(b.phone || '').replace(/\\D/g, '');\nlet waNumber = '';\nif (raw) {\n  if (raw.startsWith('995')) {\n    waNumber = raw;                 // already has Georgian country code\n  } else if (raw.length === 9 && raw.startsWith('5')) {\n    waNumber = '995' + raw;         // local mobile, e.g. 5XX XXX XXX\n  } else if (raw.length > 9) {\n    waNumber = raw;                 // looks like it already carries a country code\n  } else {\n    waNumber = '995' + raw;         // best-effort: assume Georgia\n  }\n}\n\n// --- Message language artefacts, matched to the submission locale ---\nconst isEn = String(b.locale || 'ka') === 'en';\nconst templateName = isEn ? 'enquiry_ack_en' : 'enquiry_ack_ka';\nconst langCode = isEn ? 'en_US' : 'ka';\nconst name = b.name || '';\n// Plain-text reference of the acknowledgement (the real send uses the approved template):\nconst bodyText = isEn\n  ? `Hello ${name}, thank you for contacting One World. Our team will reach out to you shortly.`\n  : `გამარჯობა ${name}, მადლობა One World-თან დაკავშირებისთვის. ჩვენი გუნდი მალე დაგიკავშირდებათ.`;\n\nreturn [{\n  json: {\n    name,\n    email: b.email || '',\n    phone: b.phone || '',\n    waNumber,\n    fieldOfInterest: b.fieldTitle || b.fieldOfInterest || '',\n    studyLevel: b.studyLevel || '',\n    preferredContact: b.preferredContact || '',\n    message: b.message || '',\n    source: b.source || '',\n    locale: b.locale || 'ka',\n    createdAt: b.createdAt || '',\n    id: b.id || '',\n    templateName,\n    langCode,\n    bodyText\n  }\n}];"
+      },
+      "id": "b1a1e002-0000-4000-8000-000000000002",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {}
+      },
+      "id": "b1a1e003-0000-4000-8000-000000000003",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 120]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Enquiries",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.createdAt }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Field of interest": "={{ $json.fieldOfInterest }}",
+            "Study level": "={{ $json.studyLevel }}",
+            "Preferred contact": "={{ $json.preferredContact }}",
+            "Message": "={{ $json.message }}",
+            "Source": "={{ $json.source }}",
+            "Locale": "={{ $json.locale }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "b1a1e004-0000-4000-8000-000000000004",
+      "name": "Append to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-haswaNumber",
+              "leftValue": "={{ $json.waNumber }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a1e005-0000-4000-8000-000000000005",
+      "name": "Has phone?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 480]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "YOUR_WHATSAPP_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ $json.waNumber }}",
+        "messageType": "template",
+        "template": "={{ $json.templateName + '|' + $json.langCode }}",
+        "components": {
+          "component": [
+            {
+              "type": "body",
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "type": "text",
+                    "text": "={{ $json.name }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "b1a1e006-0000-4000-8000-000000000006",
+      "name": "Send WhatsApp message",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [720, 480],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "REPLACE_WITH_WHATSAPP_CLOUD_CREDENTIAL_ID",
+          "name": "WhatsApp Cloud API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## CIC enquiry automation\nTrigger: the website `Enquiries.afterChange` hook POSTs the new lead here.\n\n**Before going live** replace every `REPLACE_WITH_*` / `YOUR_*` placeholder:\n- Normalize node → set `EXPECTED_SECRET` = site's `N8N_WEBHOOK_SECRET` (checks the `x-n8n-secret` header; left as-is = check skipped for testing).\n- Google Sheet → `YOUR_SPREADSHEET_ID` + Google Sheets OAuth2 credential. Tab `Enquiries` with a header row.\n- WhatsApp → `YOUR_WHATSAPP_PHONE_NUMBER_ID` + WhatsApp Cloud API credential.\n- Approve two Meta templates: `enquiry_ack_ka` (ka) & `enquiry_ack_en` (en_US), each with one `{{1}}` body param (the name).\n\nSee README.md in this folder for full setup.",
+        "height": 320,
+        "width": 420
+      },
+      "id": "b1a1e007-0000-4000-8000-000000000007",
+      "name": "Setup notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-40, -80]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Normalize", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          { "node": "Respond to Webhook", "type": "main", "index": 0 },
+          { "node": "Append to Google Sheet", "type": "main", "index": 0 },
+          { "node": "Has phone?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Has phone?": {
+      "main": [
+        [
+          { "node": "Send WhatsApp message", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

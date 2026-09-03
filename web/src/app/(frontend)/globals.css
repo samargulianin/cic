@@ -1,41 +1,40 @@
 @import 'tailwindcss';
 
 /*
-  Brand system from the official CIC Georgia guidelines (პრეზენტაცია):
-  - Type: bold rounded sans for display + body (Bezier Sans), grotesk for fine print
-    (Aktiv Grotesk). All sans — no serif. We approximate with Noto Sans Georgian
-    (full Georgian + Latin coverage) across weights.
-  - Palette: indigo navy, slate blue, brick red, pale yellow, off-white, near-black.
+  Brand system from the official CIC Georgia brand book:
+  - Type: Noto Sans Georgian (full Georgian + Latin) for display + body.
+  - Palette (exact swatches): navy #283574, slate #5a6883, crimson #922a31,
+    pale yellow #f1eeb6, off-white #eeeeee, light gray #cecece, black #1c1c1a.
 */
 @theme {
-  /* Neutrals (cool off-white from palette swatch) */
-  --color-ink: #1f2547;
-  --color-muted: #5c6473;
+  /* Neutrals — off-white / grays from the brand palette (#eeeeee, #cecece, #1c1c1a) */
+  --color-ink: #1c1f36; /* near-black text, navy-tinted for cohesion */
+  --color-muted: #5a6883; /* slate blue (palette swatch 2) doubles as muted text */
   --color-surface: #ffffff;
-  --color-paper: #f1f2f2;
-  --color-subtle: #e9eaec;
-  --color-border: #dedfe3;
+  --color-paper: #eeeeee; /* off-white (palette swatch 5) */
+  --color-subtle: #e7e7e7;
+  --color-border: #d9d9d9; /* light gray (palette swatch 6) */
 
-  /* Indigo navy — primary brand colour */
-  --color-navy-50: #eef0f8;
-  --color-navy-100: #d4daee;
-  --color-navy-300: #97a2c8;
-  --color-navy-500: #5c6e8f; /* slate blue (palette swatch 2) */
-  --color-navy-700: #2e3a7e; /* primary indigo (palette swatch 1) */
-  --color-navy-800: #28316b;
-  --color-navy-900: #1e2552;
+  /* Indigo navy — primary brand colour (#283574) */
+  --color-navy-50: #ecedf6;
+  --color-navy-100: #cfd3e8;
+  --color-navy-300: #9aa1c5;
+  --color-navy-500: #5a6883; /* slate blue (palette swatch 2) */
+  --color-navy-700: #283574; /* primary indigo (palette swatch 1) */
+  --color-navy-800: #212c62;
+  --color-navy-900: #1a2350;
 
-  /* Cambridge red — brighter crimson (preferred over the muted brick) */
-  --color-red-400: #c0334d;
-  --color-red-500: #a8203c;
-  --color-red-600: #931a33;
-  --color-red-700: #7a1529;
+  /* Cambridge crimson — brand red (#922a31) */
+  --color-red-400: #b23a42;
+  --color-red-500: #a12f37;
+  --color-red-600: #922a31; /* primary crimson (palette swatch 3) */
+  --color-red-700: #7a232a;
 
-  /* Pale yellow accent (palette swatch 4) */
-  --color-cream: #ece9a6;
-  --color-cream-soft: #f4f2cf;
+  /* Pale yellow accent (palette swatch 4, #f1eeb6) */
+  --color-cream: #f1eeb6;
+  --color-cream-soft: #f7f5d6;
 
-  /* Typography — all sans */
+  /* Typography — Bézier Sans for display/headings, Noto Sans Georgian for body */
   --font-sans: var(--font-noto-sans-georgian), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: var(--font-noto-sans-georgian), ui-sans-serif, system-ui, sans-serif;
 
@@ -66,12 +65,12 @@ h3 {
   letter-spacing: -0.02em;
 }
 
-/* Indigo hero backdrop with a brick-red glow (referance3 / Facebook cover). */
+/* Indigo hero backdrop with a crimson glow (brand palette / Facebook cover). */
 .bg-hero {
   background:
-    radial-gradient(75% 90% at 82% 10%, rgba(156, 43, 48, 0.30) 0%, transparent 55%),
-    radial-gradient(80% 80% at 0% 100%, rgba(92, 110, 143, 0.45) 0%, transparent 60%),
-    linear-gradient(155deg, #2e3a7e 0%, #28316b 55%, #1e2552 100%);
+    radial-gradient(75% 90% at 82% 10%, rgba(146, 42, 49, 0.32) 0%, transparent 55%),
+    radial-gradient(80% 80% at 0% 100%, rgba(90, 104, 131, 0.45) 0%, transparent 60%),
+    linear-gradient(155deg, #283574 0%, #212c62 55%, #1a2350 100%);
 }
 
 .bg-red-cta {

@@ -9,8 +9,7 @@ import { Footer } from '@/components/Footer'
 import { Analytics } from '@/components/Analytics'
 import '../globals.css'
 
-// Single bold-capable sans — display + body (Bezier Sans / Aktiv Grotesk intent),
-// full Georgian (Mkhedruli) + Latin coverage (PRD R1.5).
+// Single sans — display + body. Full Georgian (Mkhedruli) + Latin coverage.
 const notoSans = Noto_Sans_Georgian({
   subsets: ['georgian', 'latin'],
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -20,9 +19,9 @@ const notoSans = Noto_Sans_Georgian({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
-  title: { default: 'One World × Cambridge International College', template: '%s — One World' },
+  title: { default: 'CIC Georgia — Cambridge International College', template: '%s — CIC Georgia' },
   description:
-    'British accredited distance-learning diplomas in Georgia. One World — official representative of Cambridge International College since 1935.',
+    'British accredited distance-learning diplomas in Georgia. CIC Georgia — official representative of Cambridge International College since 1935.',
 }
 
 export function generateStaticParams() {

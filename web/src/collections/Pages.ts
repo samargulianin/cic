@@ -3,7 +3,10 @@ import { Hero } from '../blocks/Hero'
 import { TrustStrip } from '../blocks/TrustStrip'
 import { StatsCallout } from '../blocks/StatsCallout'
 import { FieldsGrid } from '../blocks/FieldsGrid'
+import { Programs } from '../blocks/Programs'
 import { Narrative } from '../blocks/Narrative'
+import { HowItWorks } from '../blocks/HowItWorks'
+import { About } from '../blocks/About'
 import { CTABanner } from '../blocks/CTABanner'
 
 // Block-based pages. The homepage (slug "home") is composed from section blocks,
@@ -33,7 +36,7 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       localized: true,
-      blocks: [Hero, TrustStrip, StatsCallout, FieldsGrid, Narrative, CTABanner],
+      blocks: [Hero, TrustStrip, StatsCallout, FieldsGrid, Programs, Narrative, HowItWorks, About, CTABanner],
     },
     {
       name: 'meta',

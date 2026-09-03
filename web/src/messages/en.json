@@ -20,11 +20,11 @@
     "phoneCall": "Phone",
     "emailContact": "Email",
     "message": "Message",
-    "consent": "I agree to be contacted by One World about this enquiry.",
+    "consent": "I agree to be contacted by CIC Georgia about this enquiry.",
     "submit": "Send enquiry",
     "sending": "Sending…",
     "successTitle": "Thank you — your enquiry is on its way.",
-    "successBody": "One World will get back to you shortly via your preferred channel.",
+    "successBody": "CIC Georgia will get back to you shortly via your preferred channel.",
     "whatsappPrefill": "Hello, I'd like to enquire about a CIC programme.",
     "errors": {
       "missing_fields": "Please enter your name and email.",

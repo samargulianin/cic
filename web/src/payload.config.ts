@@ -10,6 +10,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Fields } from './collections/Fields'
 import { Pages } from './collections/Pages'
+import { Programs } from './collections/Programs'
 import { Enquiries } from './collections/Enquiries'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
@@ -21,8 +22,8 @@ const dirname = path.dirname(filename)
 // (dev-friendly — enquiry notifications are printed to the terminal).
 const email = process.env.SMTP_HOST
   ? nodemailerAdapter({
-      defaultFromAddress: 'no-reply@oneworld.ge',
-      defaultFromName: 'One World',
+      defaultFromAddress: 'no-reply@cicgeorgia.ge',
+      defaultFromName: 'CIC Georgia',
       transportOptions: {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
@@ -35,7 +36,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     meta: {
-      titleSuffix: '— One World × CIC',
+      titleSuffix: '— CIC Georgia',
     },
     components: {
       beforeDashboard: ['/components/admin/RecentLeads'],
@@ -55,7 +56,7 @@ export default buildConfig({
     defaultLocale: 'ka',
     fallback: true,
   },
-  collections: [Pages, Fields, Media, Enquiries, Users],
+  collections: [Pages, Fields, Programs, Media, Enquiries, Users],
   globals: [Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

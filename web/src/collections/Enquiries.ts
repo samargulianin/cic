@@ -169,7 +169,7 @@ export const Enquiries: CollectionConfig = {
           try {
             await req.payload.sendEmail({
               to,
-              from: process.env.EMAIL_FROM || 'no-reply@oneworld.ge',
+              from: process.env.EMAIL_FROM || 'no-reply@cicgeorgia.ge',
               replyTo: doc.email,
               subject: `New enquiry — ${doc.name}`,
               text: [
@@ -198,14 +198,47 @@ export const Enquiries: CollectionConfig = {
           const ka = doc.locale !== 'en'
           await req.payload.sendEmail({
             to: doc.email,
-            from: process.env.EMAIL_FROM || 'no-reply@oneworld.ge',
-            subject: ka ? 'მადლობა თქვენი მოთხოვნისთვის — One World' : 'Thank you for your enquiry — One World',
+            from: process.env.EMAIL_FROM || 'no-reply@cicgeorgia.ge',
+            subject: ka ? 'მადლობა თქვენი მოთხოვნისთვის — CIC Georgia' : 'Thank you for your enquiry — CIC Georgia',
             text: ka
-              ? `გამარჯობა ${doc.name},\n\nმადლობა One World-თან დაკავშირებისთვის. ჩვენი გუნდი მალე დაგიკავშირდებათ.\n\nპატივისცემით,\nOne World × Cambridge International College`
-              : `Hello ${doc.name},\n\nThank you for contacting One World. Our team will be in touch with you shortly.\n\nBest regards,\nOne World × Cambridge International College`,
+              ? `გამარჯობა ${doc.name},\n\nმადლობა CIC Georgia-სთან დაკავშირებისთვის. ჩვენი გუნდი მალე დაგიკავშირდებათ.\n\nპატივისცემით,\nCIC Georgia — Cambridge International College`
+              : `Hello ${doc.name},\n\nThank you for contacting CIC Georgia. Our team will be in touch with you shortly.\n\nBest regards,\nCIC Georgia — Cambridge International College`,
           })
         } catch (err) {
           req.payload.logger.error({ err }, 'Enquiry acknowledgement email failed')
+        }
+
+        // 3. Fire the n8n automation (WhatsApp auto-reply + Google Sheets log).
+        // Best-effort: if n8n is unreachable, never fail the submission.
+        const n8nUrl = process.env.N8N_ENQUIRY_WEBHOOK_URL
+        if (n8nUrl) {
+          try {
+            await fetch(n8nUrl, {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+                ...(process.env.N8N_WEBHOOK_SECRET
+                  ? { 'x-n8n-secret': process.env.N8N_WEBHOOK_SECRET }
+                  : {}),
+              },
+              body: JSON.stringify({
+                id: doc.id,
+                name: doc.name,
+                email: doc.email,
+                phone: doc.phone || '',
+                fieldTitle,
+                studyLevel: doc.studyLevel || '',
+                preferredContact: doc.preferredContact,
+                message: doc.message || '',
+                consent: doc.consent,
+                source: doc.source || '',
+                locale: doc.locale || 'ka',
+                createdAt: doc.createdAt,
+              }),
+            })
+          } catch (err) {
+            req.payload.logger.error({ err }, 'Enquiry n8n webhook failed')
+          }
         }
       },
     ],
