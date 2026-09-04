@@ -16,12 +16,12 @@ export function Logo({
 }) {
   return (
     <span className={cn('flex flex-col leading-none', className)}>
-      <span className={cn('font-extrabold tracking-tight text-navy-700', nameClassName)}>
+      <span className={cn('font-extrabold tracking-tight whitespace-nowrap text-navy-700', nameClassName)}>
         CIC<span className="font-semibold text-navy-500"> Georgia</span>
       </span>
       {subline ? (
-        <span className={cn('mt-2 flex items-center gap-2', sublineClassName)}>
-          <span className="h-0.5 w-6 shrink-0 rounded-full bg-red-600" aria-hidden />
+        <span className={cn('mt-2 flex items-start gap-2', sublineClassName)}>
+          <span className="mt-[0.35em] h-0.5 w-6 shrink-0 rounded-full bg-red-600" aria-hidden />
           <span className="text-[0.56rem] font-semibold uppercase tracking-[0.14em] text-muted">
             Official Affiliate · Cambridge International College
           </span>

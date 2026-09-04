@@ -44,7 +44,7 @@ export function EnquiryForm({
 
   const labelCls = 'text-sm font-semibold'
   const inputCls =
-    'rounded-lg border border-border bg-white px-4 py-3 text-sm outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100'
+    'w-full min-w-0 max-w-full rounded-lg border border-border bg-white px-4 py-3 text-sm outline-none focus:border-navy-500 focus:ring-2 focus:ring-navy-100'
 
   return (
     <form action={action} className="flex flex-col gap-4" noValidate>
