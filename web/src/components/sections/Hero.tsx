@@ -44,7 +44,7 @@ export async function Hero(props: HeroProps) {
           </span>
         ) : null}
 
-        <h1 className="max-w-2xl text-4xl leading-[1.05] font-extrabold tracking-tight text-balance [overflow-wrap:anywhere] sm:text-5xl lg:text-6xl">
+        <h1 className="max-w-2xl text-3xl leading-[1.1] font-extrabold tracking-tight text-balance [overflow-wrap:anywhere] sm:text-5xl sm:leading-[1.05] lg:text-6xl">
           <AccentHeading text={props.heading || ''} />
         </h1>
 
