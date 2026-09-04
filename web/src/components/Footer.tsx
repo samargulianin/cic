@@ -19,13 +19,13 @@ export async function Footer({ locale }: { locale: Locale }) {
   return (
     <footer className="border-t border-border bg-subtle">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col gap-4 lg:col-span-1">
+        <div className="flex flex-col gap-4 lg:col-span-2">
           <Image
             src="/brand/cic-affiliate.png"
             alt="Official 2026 Affiliate of Cambridge International College"
             width={2786}
             height={844}
-            className="h-14 w-auto self-start"
+            className="h-auto w-[180px] self-start opacity-90"
           />
           {footer?.tagline ? <p className="max-w-xs text-sm text-muted">{footer.tagline}</p> : null}
           {social.length ? (

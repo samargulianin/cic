@@ -123,12 +123,38 @@ export async function seed() {
     },
   })
 
-  await payload.updateGlobal({
+  // Footer link columns. Like the nav, array rows are NOT localized as a whole
+  // (only `title` / `label` subfields are, and `href` not at all) — so seed `ka`
+  // first, then update the SAME rows/links by id for `en` to avoid clobbering.
+  const footerColumns = [
+    {
+      title: { ka: 'ნავიგაცია', en: 'Explore' },
+      links: [
+        { ka: 'პროგრამები', en: 'Programs', href: '#programs' },
+        { ka: 'როგორ მუშაობს', en: 'How it works', href: '#how-it-works' },
+        { ka: 'CIC-ის შესახებ', en: 'About CIC', href: '#about' },
+      ],
+    },
+    {
+      title: { ka: 'კონტაქტი', en: 'Contact' },
+      links: [
+        { ka: 'WhatsApp', en: 'WhatsApp', href: 'https://wa.me/995593116946' },
+        { ka: 'info@cicgeorgia.ge', en: 'info@cicgeorgia.ge', href: 'mailto:info@cicgeorgia.ge' },
+        { ka: '+995 593 11 69 46', en: '+995 593 11 69 46', href: 'tel:+995593116946' },
+      ],
+    },
+  ]
+
+  const seededFooter = await payload.updateGlobal({
     slug: 'footer',
     locale: 'ka',
     data: {
       tagline: '',
       accreditationNote: 'CIC — Cambridge International College ბრიტანული დისტანციური კოლეჯი, დაარსებული 1935 წელს.',
+      columns: footerColumns.map((c) => ({
+        title: c.title.ka,
+        links: c.links.map((l) => ({ label: l.ka, href: l.href })),
+      })),
     },
   })
   await payload.updateGlobal({
@@ -137,6 +163,15 @@ export async function seed() {
     data: {
       tagline: '',
       accreditationNote: 'CIC is a British accredited distance-learning college, established in 1935.',
+      columns: (seededFooter.columns || []).map((col, ci) => ({
+        id: col.id,
+        title: footerColumns[ci].title.en,
+        links: (col.links || []).map((lnk, li) => ({
+          id: lnk.id,
+          label: footerColumns[ci].links[li].en,
+          href: footerColumns[ci].links[li].href,
+        })),
+      })),
     },
   })
 
