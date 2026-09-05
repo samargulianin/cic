@@ -9,7 +9,7 @@ export const Enquiries: CollectionConfig = {
   slug: 'enquiries',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'fieldOfInterest', 'status', 'assignedTo', 'followUpDate', 'createdAt'],
+    defaultColumns: ['name', 'email', 'programInterest', 'fieldOfInterest', 'status', 'assignedTo', 'followUpDate', 'createdAt'],
     // Let staff find a lead by any of the details they'd have on hand.
     listSearchableFields: ['name', 'email', 'phone', 'message'],
     group: 'Leads',
@@ -26,6 +26,15 @@ export const Enquiries: CollectionConfig = {
     { name: 'name', type: 'text', required: true },
     { name: 'email', type: 'email', required: true },
     { name: 'phone', type: 'text' },
+    {
+      name: 'programInterest',
+      type: 'text',
+      label: 'Programme of interest',
+      admin: {
+        readOnly: true,
+        description: 'The specific programme this enquiry came from (set automatically from a programme page).',
+      },
+    },
     { name: 'fieldOfInterest', type: 'relationship', relationTo: 'fields' },
     {
       name: 'studyLevel',
@@ -177,6 +186,7 @@ export const Enquiries: CollectionConfig = {
                 `Email: ${doc.email}`,
                 `Phone: ${doc.phone || '—'}`,
                 `Preferred contact: ${doc.preferredContact}`,
+                `Programme of interest: ${doc.programInterest || '—'}`,
                 `Field of interest: ${fieldTitle}`,
                 `Study level: ${doc.studyLevel || '—'}`,
                 `Source: ${doc.source || '—'}`,

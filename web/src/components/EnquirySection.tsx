@@ -8,9 +8,11 @@ import type { Locale } from '@/i18n/routing'
 export async function EnquirySection({
   locale,
   fields,
+  program,
 }: {
   locale: Locale
   fields: { id: string; title: string }[]
+  program?: { slug: string; title: string }
 }) {
   const t = await getTranslations('enquiry')
   const channels = [
@@ -47,7 +49,7 @@ export async function EnquirySection({
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-6 shadow-lg sm:p-8">
-          <EnquiryForm locale={locale} fields={fields} />
+          <EnquiryForm locale={locale} fields={fields} program={program} />
         </div>
       </Container>
     </section>

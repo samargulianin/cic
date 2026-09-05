@@ -9,17 +9,20 @@ const initial: EnquiryState = { status: 'idle' }
 export function EnquiryForm({
   locale,
   fields,
+  program,
 }: {
   locale: string
   fields: { id: string; title: string }[]
+  program?: { slug: string; title: string }
 }) {
   const t = useTranslations('enquiry')
   const [state, action, isPending] = useActionState(submitEnquiry, initial)
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
   // Capture which CTA opened the form: any link to #enquire can carry a
-  // `data-enquiry-source` attribute; the last one clicked wins.
-  const [source, setSource] = useState('homepage')
+  // `data-enquiry-source` attribute; the last one clicked wins. On a programme
+  // page the source defaults to that programme.
+  const [source, setSource] = useState(program ? `program:${program.slug}` : 'homepage')
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const link = (e.target as HTMLElement)?.closest?.('a[href*="#enquire"]') as HTMLElement | null
@@ -50,6 +53,14 @@ export function EnquiryForm({
     <form action={action} className="flex flex-col gap-4" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="source" value={source} />
+      {program ? <input type="hidden" name="programInterest" value={program.title} /> : null}
+
+      {program ? (
+        <div className="rounded-lg border border-navy-100 bg-navy-50 px-4 py-3 text-sm">
+          <span className="text-muted">{t('enquiringAbout')} </span>
+          <span className="font-semibold text-navy-900">{program.title}</span>
+        </div>
+      ) : null}
       {/* Honeypot — hidden from users, catches bots. */}
       <input
         type="text"

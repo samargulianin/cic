@@ -509,6 +509,10 @@ export interface Enquiry {
   name: string;
   email: string;
   phone?: string | null;
+  /**
+   * The specific programme this enquiry came from (set automatically from a programme page).
+   */
+  programInterest?: string | null;
   fieldOfInterest?: (number | null) | Field;
   /**
    * Study level the enquirer is interested in (if given).
@@ -992,6 +996,7 @@ export interface EnquiriesSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   phone?: T;
+  programInterest?: T;
   fieldOfInterest?: T;
   studyLevel?: T;
   preferredContact?: T;

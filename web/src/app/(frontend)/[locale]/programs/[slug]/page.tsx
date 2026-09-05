@@ -184,7 +184,11 @@ export default async function ProgramPage({ params }: Props) {
         </Container>
       </section>
 
-      <EnquirySection locale={locale} fields={fields.map((f) => ({ id: String(f.id), title: f.title as string }))} />
+      <EnquirySection
+        locale={locale}
+        fields={fields.map((f) => ({ id: String(f.id), title: f.title as string }))}
+        program={{ slug: p.slug as string, title: p.title as string }}
+      />
     </>
   )
 }

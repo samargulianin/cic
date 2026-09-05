@@ -51,6 +51,7 @@ export async function submitEnquiry(
   const preferredContact = (formData.get('preferredContact') as string) || 'whatsapp'
   const message = (formData.get('message') as string)?.trim()
   const consent = formData.get('consent') === 'on'
+  const programInterest = (formData.get('programInterest') as string)?.trim()
   const source = (formData.get('source') as string) || 'homepage'
   const locale = (formData.get('locale') as string) || 'ka'
   const token = (formData.get('cf-turnstile-response') as string) || null
@@ -92,8 +93,8 @@ export async function submitEnquiry(
             ...priorNotes,
             {
               note: `Repeat enquiry via "${source}"${
-                message ? `:\n${message}` : ''
-              }`,
+                programInterest ? ` — programme: ${programInterest}` : ''
+              }${message ? `:\n${message}` : ''}`,
               at: new Date().toISOString(),
             },
           ],
@@ -114,6 +115,7 @@ export async function submitEnquiry(
         consent,
         source,
         locale,
+        ...(programInterest ? { programInterest } : {}),
         ...(studyLevel ? { studyLevel: studyLevel as 'level-4' | 'level-5' | 'level-6' | 'level-7' } : {}),
         ...(fieldOfInterest && !Number.isNaN(Number(fieldOfInterest))
           ? { fieldOfInterest: Number(fieldOfInterest) }
