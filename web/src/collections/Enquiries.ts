@@ -152,6 +152,11 @@ export const Enquiries: CollectionConfig = {
       async ({ doc, operation, req }) => {
         if (operation !== 'create') return
 
+        // Fire-and-forget: the lead is already saved, so never block the
+        // visitor's submission on email/webhook delivery. A slow or
+        // misconfigured SMTP server must not hang the form.
+        void (async () => {
+
         // Resolve the related field to its title (email showed a raw ID before).
         let fieldTitle = '—'
         if (doc.fieldOfInterest) {
@@ -250,6 +255,7 @@ export const Enquiries: CollectionConfig = {
             req.payload.logger.error({ err }, 'Enquiry n8n webhook failed')
           }
         }
+        })()
       },
     ],
   },

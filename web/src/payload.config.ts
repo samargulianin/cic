@@ -31,6 +31,10 @@ const email = process.env.SMTP_HOST
         // Port 465 uses implicit TLS; 587 upgrades via STARTTLS.
         secure: Number(process.env.SMTP_PORT || 587) === 465,
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        // Fail fast rather than hanging if the mail server is unreachable.
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
       },
     })
   : undefined
