@@ -22,11 +22,14 @@ const dirname = path.dirname(filename)
 // (dev-friendly — enquiry notifications are printed to the terminal).
 const email = process.env.SMTP_HOST
   ? nodemailerAdapter({
-      defaultFromAddress: 'no-reply@cicgeorgia.ge',
+      // From must match the authenticated mailbox or the mail server rejects it.
+      defaultFromAddress: process.env.SMTP_USER || 'info@cicgeorgia.ge',
       defaultFromName: 'CIC Georgia',
       transportOptions: {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
+        // Port 465 uses implicit TLS; 587 upgrades via STARTTLS.
+        secure: Number(process.env.SMTP_PORT || 587) === 465,
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
       },
     })

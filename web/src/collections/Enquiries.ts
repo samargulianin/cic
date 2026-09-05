@@ -178,7 +178,7 @@ export const Enquiries: CollectionConfig = {
           try {
             await req.payload.sendEmail({
               to,
-              from: process.env.EMAIL_FROM || 'no-reply@cicgeorgia.ge',
+              from: process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@cicgeorgia.ge',
               replyTo: doc.email,
               subject: `New enquiry — ${doc.name}`,
               text: [
@@ -208,7 +208,7 @@ export const Enquiries: CollectionConfig = {
           const ka = doc.locale !== 'en'
           await req.payload.sendEmail({
             to: doc.email,
-            from: process.env.EMAIL_FROM || 'no-reply@cicgeorgia.ge',
+            from: process.env.EMAIL_FROM || process.env.SMTP_USER || 'info@cicgeorgia.ge',
             subject: ka ? 'მადლობა თქვენი მოთხოვნისთვის — CIC Georgia' : 'Thank you for your enquiry — CIC Georgia',
             text: ka
               ? `გამარჯობა ${doc.name},\n\nმადლობა CIC Georgia-სთან დაკავშირებისთვის. ჩვენი გუნდი მალე დაგიკავშირდებათ.\n\nპატივისცემით,\nCIC Georgia — Cambridge International College`
