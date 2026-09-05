@@ -6,7 +6,7 @@ import { getProgram, getFields, getPrograms } from '@/lib/payload'
 import { EnquirySection } from '@/components/EnquirySection'
 import { Container } from '@/components/ui'
 import { LEVELS, ONLINE_SLUGS } from '@/lib/programCatalogue'
-import type { Locale } from '@/i18n/routing'
+import { routing, type Locale } from '@/i18n/routing'
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
 
@@ -21,10 +21,21 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
+  const { locale, slug } = await params
   const p = (await getProgram(slug)) as any
   if (!p) return {}
-  return { title: p.title, description: (p.summary as string) || undefined }
+  const path = `/${locale}/programs/${slug}`
+  const languages = Object.fromEntries(routing.locales.map((l) => [l, `/${l}/programs/${slug}`]))
+  const description =
+    (p.summary as string) ||
+    `${p.title} — a Cambridge International College distance-learning programme, offered in Georgia through CIC Georgia.`
+  return {
+    title: p.title,
+    description,
+    alternates: { canonical: path, languages },
+    openGraph: { type: 'article', title: p.title, description, url: path },
+    twitter: { card: 'summary_large_image', title: p.title, description },
+  }
 }
 
 export default async function ProgramPage({ params }: Props) {

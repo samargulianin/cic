@@ -22,6 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: meta.title || undefined,
     description: meta.description || undefined,
     alternates: { canonical: `/${locale}`, languages },
+    openGraph: {
+      url: `/${locale}`,
+      title: meta.title || undefined,
+      description: meta.description || undefined,
+    },
   }
 }
 

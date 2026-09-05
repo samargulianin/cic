@@ -17,11 +17,27 @@ const notoSans = Noto_Sans_Georgian({
   display: 'swap',
 })
 
+const SITE_DESCRIPTION =
+  'British accredited distance-learning diplomas in Georgia. CIC Georgia — official representative of Cambridge International College since 1935.'
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
   title: { default: 'CIC Georgia — Cambridge International College', template: '%s — CIC Georgia' },
-  description:
-    'British accredited distance-learning diplomas in Georgia. CIC Georgia — official representative of Cambridge International College since 1935.',
+  description: SITE_DESCRIPTION,
+  // Rich preview when links are shared (Facebook, WhatsApp, LinkedIn, etc.).
+  openGraph: {
+    type: 'website',
+    siteName: 'CIC Georgia',
+    title: 'CIC Georgia — Cambridge International College',
+    description: SITE_DESCRIPTION,
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'CIC Georgia — Cambridge International College' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CIC Georgia — Cambridge International College',
+    description: SITE_DESCRIPTION,
+    images: ['/og.png'],
+  },
 }
 
 export function generateStaticParams() {
@@ -40,9 +56,34 @@ export default async function LocaleLayout({
   setRequestLocale(locale)
   const messages = await getMessages()
 
+  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOrganization',
+    name: 'CIC Georgia',
+    alternateName: 'Cambridge International College Georgia',
+    url: base,
+    logo: `${base}/brand/cic-affiliate.png`,
+    description: SITE_DESCRIPTION,
+    foundingDate: '1935',
+    sameAs: ['https://www.facebook.com/CICbyOneWorld/'],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+995 593 11 69 46',
+      email: 'info@cicgeorgia.ge',
+      contactType: 'admissions',
+      areaServed: 'GE',
+      availableLanguage: ['ka', 'en'],
+    },
+  }
+
   return (
     <html lang={locale} className={notoSans.variable}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
         <NextIntlClientProvider messages={messages}>
           <Header locale={locale} />
           <main>{children}</main>
