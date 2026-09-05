@@ -2,13 +2,23 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { getProgram, getFields } from '@/lib/payload'
+import { getProgram, getFields, getPrograms } from '@/lib/payload'
 import { EnquirySection } from '@/components/EnquirySection'
 import { Container } from '@/components/ui'
 import { LEVELS, ONLINE_SLUGS } from '@/lib/programCatalogue'
 import type { Locale } from '@/i18n/routing'
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> }
+
+// Cache the rendered page and refresh it at most every 5 minutes (ISR). Avoids
+// a database round-trip on every click; admin edits appear within the window.
+export const revalidate = 300
+
+// Pre-render every programme page at build so they're served statically.
+export async function generateStaticParams() {
+  const programs = await getPrograms()
+  return programs.map((p) => ({ slug: p.slug as string }))
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params

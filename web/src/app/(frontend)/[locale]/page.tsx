@@ -8,6 +8,10 @@ import { routing } from '@/i18n/routing'
 
 type Props = { params: Promise<{ locale: Locale }> }
 
+// ISR: serve a cached homepage and refresh it at most every 5 minutes, so admin
+// edits appear without a redeploy while pages stay fast.
+export const revalidate = 300
+
 // Per-locale metadata with hreflang alternates (PRD R1.4 / §7 SEO).
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params

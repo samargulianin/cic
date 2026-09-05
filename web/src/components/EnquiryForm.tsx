@@ -84,17 +84,21 @@ export function EnquiryForm({
           <span className={labelCls}>{t('phone')}</span>
           <input name="phone" className={inputCls} autoComplete="tel" inputMode="tel" />
         </label>
-        <label className="flex flex-col gap-1.5">
-          <span className={labelCls}>{t('field')}</span>
-          <select name="fieldOfInterest" className={inputCls} defaultValue="">
-            <option value="">{t('fieldPlaceholder')}</option>
-            {fields.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.title}
-              </option>
-            ))}
-          </select>
-        </label>
+        {/* On a programme page the interest is already captured, so the
+            field-of-interest selector is hidden there. */}
+        {!program ? (
+          <label className="flex flex-col gap-1.5">
+            <span className={labelCls}>{t('field')}</span>
+            <select name="fieldOfInterest" className={inputCls} defaultValue="">
+              <option value="">{t('fieldPlaceholder')}</option>
+              {fields.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
         <label className="flex flex-col gap-1.5 sm:col-span-2">
           <span className={labelCls}>{t('preferredContact')}</span>
           <select name="preferredContact" className={inputCls} defaultValue="whatsapp">
