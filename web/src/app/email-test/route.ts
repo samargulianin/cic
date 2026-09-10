@@ -15,7 +15,16 @@ export async function GET(req: Request) {
   const from = process.env.EMAIL_FROM || 'info@cicgeorgia.ge'
   const to = process.env.ENQUIRY_NOTIFY_TO || 'info@cicgeorgia.ge'
 
-  const cfg = { hasBrevoKey: !!apiKey, from, to }
+  const cfg = {
+    hasBrevoKey: !!apiKey,
+    keyLength: apiKey?.length ?? 0,
+    keyPrefix: apiKey?.slice(0, 8) ?? null,
+    keyLast4: apiKey?.slice(-4) ?? null,
+    keyHasBrackets: !!apiKey && (apiKey.includes('<') || apiKey.includes('>')),
+    keyHasWhitespace: !!apiKey && apiKey !== apiKey.trim(),
+    from,
+    to,
+  }
   if (!apiKey) {
     return NextResponse.json({ cfg, error: 'BREVO_API_KEY is not set in this environment' })
   }
