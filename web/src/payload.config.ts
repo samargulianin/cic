@@ -20,10 +20,19 @@ const dirname = path.dirname(filename)
 
 // Email: use SMTP when configured, otherwise fall back to Payload's console logger
 // (dev-friendly — enquiry notifications are printed to the terminal).
+// Relays (Brevo etc.) authenticate with a login that is NOT a sendable address,
+// so the default sender comes from EMAIL_FROM — accepting either a bare address
+// or the `Name <address>` form — and only falls back to SMTP_USER.
+const defaultFrom =
+  process.env.EMAIL_FROM?.match(/<(.+)>/)?.[1] ||
+  process.env.EMAIL_FROM ||
+  process.env.SMTP_USER ||
+  'info@cicgeorgia.ge'
+
 const email = process.env.SMTP_HOST
   ? nodemailerAdapter({
-      // From must match the authenticated mailbox or the mail server rejects it.
-      defaultFromAddress: process.env.SMTP_USER || 'info@cicgeorgia.ge',
+      // From must be a sender the relay has verified, or it rejects the message.
+      defaultFromAddress: defaultFrom,
       defaultFromName: 'CIC Georgia',
       transportOptions: {
         host: process.env.SMTP_HOST,
