@@ -45,7 +45,7 @@ Single Next.js 16 (App Router) app with **Payload CMS 3 embedded** — one codeb
 
 **Collections/globals:** `Pages`, `Fields` (the 19 professional fields + study-level taxonomy), `Enquiries` (leads), `Media`, `Users` (auth); `Header`, `Footer` globals. All in `src/collections/` and `src/globals/`, registered in `src/payload.config.ts`.
 
-**Enquiry flow** (`src/actions/enquiry.ts`, a server action — used instead of an API route to avoid clashing with Payload's `/api` catch-all and the i18n proxy): honeypot + Cloudflare Turnstile (skipped if `TURNSTILE_SECRET_KEY` unset) + validation → `payload.create` with `overrideAccess: true` → the `Enquiries` `afterChange` hook emails One World (`ENQUIRY_NOTIFY_TO`; logs to console if no SMTP). Public REST `create` on `Enquiries` is disabled by design, so all creation goes through the action.
+**Enquiry flow** (`src/actions/enquiry.ts`, a server action — used instead of an API route to avoid clashing with Payload's `/api` catch-all and the i18n proxy): honeypot + Cloudflare Turnstile (skipped if `TURNSTILE_SECRET_KEY` unset) + validation → `payload.create` with `overrideAccess: true` → the `Enquiries` `afterChange` hook emails One World (`ENQUIRY_NOTIFY_TO`; logs to console if no mail transport). Public REST `create` on `Enquiries` is disabled by design, so all creation goes through the action.
 
 ## Design system
 
@@ -57,6 +57,19 @@ Tailwind v4 with brand tokens in `src/app/(frontend)/globals.css` `@theme` (from
 
 The `build` script is `payload generate:importmap && next build` (not just `next build`). This is deliberate: `src/app/(payload)/admin/importMap.js` is imported by the admin layout/pages, and Railway's cached `copy / /app` layer kept serving a build context *without* it, failing with `Can't resolve '../importMap.js'` even though the file is committed. Regenerating it at the start of the build writes it fresh into the build context, so the import always resolves regardless of cache state. `generate:importmap` only instantiates the config (no DB connection) but reads `PAYLOAD_SECRET`/`DATABASE_URI` — these must be available as Railway **build-time** variables.
 
+## Email
+
+**Railway blocks outbound SMTP on every port**, so nodemailer times out there no matter the
+provider (both the old cPanel host and Brevo's relay fail identically with `ETIMEDOUT`). Mail
+therefore goes over **Brevo's HTTPS API** via the custom adapter in `src/lib/brevoEmail.ts`,
+selected in `payload.config.ts` when `BREVO_API_KEY` is set. The `SMTP_*` path remains as a
+fallback for local use only.
+
+`cicgeorgia.ge` is domain-authenticated in Brevo (brevo-code TXT, two `brevo{1,2}._domainkey`
+CNAMEs, `_dmarc` TXT). DNS is managed at **namespace.ge** (nameservers `ns1.ge`/`ns2.ge`) and the
+zone editor expects **fully-qualified** record names. The branded subdomain is `send` — never
+`mail`, which is the MX target (`50.87.146.216`); pointing a CNAME there would break incoming mail.
+
 ## Going to production
-Swap `sqliteAdapter` → `@payloadcms/db-postgres` (+ `DATABASE_URI`); set `SMTP_*`/`ENQUIRY_NOTIFY_TO` and Turnstile keys; set a strong `PAYLOAD_SECRET`; remove the `/seed` route (`src/app/seed/`).
+Swap `sqliteAdapter` → `@payloadcms/db-postgres` (+ `DATABASE_URI`); set `BREVO_API_KEY`/`EMAIL_FROM`/`ENQUIRY_NOTIFY_TO` and Turnstile keys; set a strong `PAYLOAD_SECRET`; remove the `/seed` route (`src/app/seed/`).
 when creating form on the website always use build validation
