@@ -4,6 +4,7 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { brevoAdapter } from './lib/brevoEmail'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
@@ -29,7 +30,15 @@ const defaultFrom =
   process.env.SMTP_USER ||
   'info@cicgeorgia.ge'
 
-const email = process.env.SMTP_HOST
+// Brevo's HTTPS API is preferred: Railway blocks outbound SMTP, so a nodemailer
+// transport times out there regardless of provider. SMTP stays as a fallback for
+// environments that do allow it.
+const email = process.env.BREVO_API_KEY
+  ? brevoAdapter(process.env.BREVO_API_KEY, {
+      fromAddress: defaultFrom,
+      fromName: 'CIC Georgia',
+    })
+  : process.env.SMTP_HOST
   ? nodemailerAdapter({
       // From must be a sender the relay has verified, or it rejects the message.
       defaultFromAddress: defaultFrom,
